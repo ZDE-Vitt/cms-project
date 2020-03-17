@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="assets/css/layui.css" th:href="@{/assets/css/layui.css}">
+    <link rel="stylesheet" href="../assets/css/view.css" th:href="@{/assets/css/view.css}"/>
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js" th:src="@{/js/jquery.min.js}" ></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+    <title></title>
+</head>
+<body class="layui-view-body">
+    <div class="layui-content">
+        <div class="layui-row layui-col-space20">
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body chart-card">
+                        <div class="chart-header">
+                            <div class="metawrap">
+                                <div class="meta">
+                                    <span>总用户数</span>
+                                </div>
+                                <div class="total" th:text="${frontUserCount}">126,560</div>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <div class="contentwrap">
+                                前台用户
+                            </div>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="field">
+                                <span><a th:href="@{/a/UserToExcel}"><button class="layui-btn layui-btn-normal layui-btn-sm">导出为Excel</button></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body chart-card">
+                        <div class="chart-header">
+                            <div class="metawrap">
+                                <div class="meta">
+                                    <span>总管理员数</span>
+                                </div>
+                                <div class="total" th:text="${userCount}">126,560</div>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <div class="contentwrap">
+                                系统用户
+                            </div>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="field">
+                                <span><a th:href="@{/a/SysUserToExcel}"><button class="layui-btn layui-btn-normal layui-btn-sm">导出为Excel</button></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body chart-card">
+                        <div class="chart-header">
+                            <div class="metawrap">
+                                <div class="meta">
+                                    <span>未审核素材</span>
+                                </div>
+                                <div class="total" th:text="${cresucainum}">126,560</div>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <div class="contentwrap">
+                                未审核素材
+                            </div>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="field">
+                                <span><a th:href="@{/a/notPreSuCaiToExcel}"><button class="layui-btn layui-btn-normal layui-btn-sm">导出为Excel</button></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body chart-card">
+                        <div class="chart-header">
+                            <div class="metawrap">
+                                <div class="meta">
+                                    <span>审核通过素材</span>
+                                </div>
+                                <div class="total" th:text="${passsucainum}">126,560</div>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <div class="contentwrap">
+                                审核通过素材
+                            </div>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="field">
+                                <span><a th:href="@{/a/preSuCaiToExcel}"><button class="layui-btn layui-btn-normal layui-btn-sm">导出为Excel</button></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-sm12 layui-col-md10">
+                <div class="layui-card">
+                    <div class="layui-tab layui-tab-brief " lay-filter="change">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this">注册用户统计</li>
+                            <li >日增素材统计</li>
+                            <li >日审素材统计</li>
+                        </ul>
+                        <div class="layui-tab-content" style="height: 600px">
+
+                            <div class="layui-tab-item layui-show" style="height: 100%">
+
+                                <div id="container" style="height: 100%"></div>
+                                <!--<iframe class='layui-col-xs8' th:src="@{/a/useradd}"></iframe>-->
+
+                            </div>
+
+                            <div class="layui-tab-item" style="height: 100%">
+
+                                <div id="container1" style="height: 100%"></div>
+                                <!--<iframe class='layui-col-xs8' th:src="@{/a/sucaiadd}"></iframe>-->
+
+                            </div>
+
+                            <div class="layui-tab-item" style="height: 100%">
+
+                                <div id="container2" style="height: 100%"></div>
+                                <!--<iframe class='layui-col-xs8' th:src="@{/a/sucaiadd}"></iframe>-->
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/layui.all.js" th:src="@{/assets/layui.all.js}"></script>
+    <script>
+
+         user();
+
+         var element = layui.element;
+         layui.use(['element', 'laydate', 'form'], function () {
+             var element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+             element.on('tab(change)', function (data) {
+                 /*console.log(this); //当前Tab标题所在的原始DOM元素
+                 console.log(data.index); //得到当前Tab的所在下标
+                 console.log(data.elem); //得到当前的Tab大容器*/
+                 if (data.index == 0){
+                     user();
+                 }
+                 if (data.index == 1){
+                     sucai();
+                 }
+                 if (data.index == 2){
+                     pass();
+                 }
+             });
+         });
+
+         function user() {
+
+             var userreg = null;
+             var userdate = null;
+
+             $.ajax({
+                 type : "post" ,
+                 url : '[[${#request.getContextPath()}]]' +  "/a/userreg" ,
+                 async: false ,
+                 success : function (data) {
+                     userreg = data.userlist;
+                     userdate = data.datelist;
+                     // console.log(userreg);
+                     // console.log(userdate);
+                 }
+             });
+
+             var dom = document.getElementById("container");
+             var myChart = echarts.init(dom);
+             var app = {};
+             option = null;
+             option = {
+                 title: {
+                     text: '用户注册'
+                 },
+                 tooltip: {
+                     trigger: 'axis',
+                     axisPointer: {
+                         type: 'cross',
+                         label: {
+                             backgroundColor: '#6a7985'
+                         }
+                     }
+                 },
+                 toolbox: {
+                     feature: {
+                         saveAsImage: {}
+                     }
+                 },
+                 grid: {
+                     left: '3%',
+                     right: '4%',
+                     bottom: '3%',
+                     containLabel: true
+                 },
+                 xAxis: [
+                     {
+                         type: 'category',
+                         boundaryGap: false,
+                         data: userdate
+                     }
+                 ],
+                 yAxis: [
+                     {
+                         type: 'value'
+                     }
+                 ],
+                 series: [
+                     {
+                         name: '用户注册',
+                         type: 'line',
+                         stack: '总量',
+                         label: {
+                             normal: {
+                                 show: true,
+                                 position: 'top'
+                             }
+                         },
+                         areaStyle: {
+                             normal: {
+                                 color: '#6FBAE1' //改变区域颜色
+                             }
+                         },
+                         itemStyle: {
+                             normal: {
+                                 color: '#92CCEA', //改变折线点的颜色
+                                 lineStyle: {
+                                     color: '#37A2DA' //改变折线颜色
+                                 }
+                             }
+                         },
+                         data: userreg
+                     }
+                 ]
+             };
+             ;
+             if (option && typeof option === "object") {
+                 myChart.setOption(option, true);
+             }
+         }
+
+         function sucai() {
+
+             var sucaiDate = null;
+             var sucaiCNum = null;
+
+             $.ajax({
+                 type : "post" ,
+                 url : '[[${#request.getContextPath()}]]' +  "/a/sucaiNum" ,
+                 async: false ,
+                 success : function (data) {
+                     sucaiDate = data.sucaiDate;
+                     sucaiCNum = data.sucaiCNum;
+                     // console.log(userreg);
+                     // console.log(userdate);
+                 }
+             });
+
+             var dom = document.getElementById("container1");
+             var myChart = echarts.init(dom);
+             var app = {};
+             option = null;
+             option = {
+                 title: {
+                     text: '日增素材'
+                 },
+                 tooltip: {
+                     trigger: 'axis',
+                     axisPointer: {
+                         type: 'cross',
+                         label: {
+                             backgroundColor: '#6a7985'
+                         }
+                     }
+                 },
+                 toolbox: {
+                     feature: {
+                         saveAsImage: {}
+                     }
+                 },
+                 grid: {
+                     left: '3%',
+                     right: '4%',
+                     bottom: '3%',
+                     containLabel: true
+                 },
+                 xAxis: [
+                     {
+                         type: 'category',
+                         boundaryGap: false,
+                         data: sucaiDate
+                     }
+                 ],
+                 yAxis: [
+                     {
+                         type: 'value'
+                     }
+                 ],
+                 series: [
+                     {
+                         name: '日增素材',
+                         type: 'line',
+                         stack: '总量',
+                         label: {
+                             normal: {
+                                 show: true,
+                                 position: 'top'
+                             }
+                         },
+                         areaStyle: {
+                             normal: {
+                                 color: '#6FBAE1' //改变区域颜色
+                             }
+                         },
+                         itemStyle: {
+                             normal: {
+                                 color: '#92CCEA', //改变折线点的颜色
+                                 lineStyle: {
+                                     color: '#37A2DA' //改变折线颜色
+                                 }
+                             }
+                         },
+                         data: sucaiCNum
+                     }
+                 ]
+             };
+             ;
+             if (option && typeof option === "object") {
+                 myChart.setOption(option, true);
+             }
+         }
+         /*function userToExcel() {
+                $.ajax({
+                    type:"post",
+                    url:'[[${#request.getContextPath()}]]' +  "/a/UserToExcel" ,
+                    success:function () {
+                        alert("success")
+                    }
+                })
+         }*/
+
+         function pass() {
+
+             var sucaipassDate = null;
+             var sucaiPassNum = null;
+             var sucaiInpassNum = null;
+
+             $.ajax({
+                 type : "post" ,
+                 url : '[[${#request.getContextPath()}]]' +  "/a/pass" ,
+                 async: false ,
+                 success : function (data) {
+                     sucaipassDate = data.sucaipassDate;
+                     sucaiPassNum = data.sucaiPassNum;
+                     sucaiInpassNum = data.sucaiInpassNum;
+                     // console.log(userreg);
+                     // console.log(userdate);
+                 }
+             });
+
+             var dom1 = document.getElementById("container2");
+             var myChart1 = echarts.init(dom1);
+             var app = {};
+             option = null;
+
+
+             setTimeout(function () {
+
+                 option = {
+                     toolbox: {
+                         feature: {
+                             saveAsImage: {}
+                         }
+                     },
+                     legend: {},
+                     dataset: {
+                         source: [
+                             sucaipassDate,
+                             sucaiPassNum,
+                             sucaiInpassNum,
+                         ]
+                     },
+                     tooltip: {
+                         trigger: 'axis',
+                         showContent: false,
+                         axisPointer: {
+                             type: 'cross',
+                             label: {
+                                 backgroundColor: '#6a7985'
+                             }
+                         }
+                     },
+                     xAxis: {type: 'category'},
+                     yAxis: {gridIndex: 0},
+                     grid: {top: '55%'},
+                     series: [
+                         {type: 'line', smooth: true, seriesLayoutBy: 'row'},
+                         {type: 'line', smooth: true, seriesLayoutBy: 'row'},
+                         {
+                             type: 'pie',
+                             id: 'pie',
+                             radius: '30%',
+                             center: ['50%', '25%'],
+                             label: {
+                                 formatter: '{b}: {@'+sucaipassDate[1]+'} ({d}%)'
+                             },
+                             encode: {
+                                 itemName: sucaipassDate[0],
+                                 value: sucaipassDate[1],
+                                 tooltip: sucaipassDate[1]
+                             }
+                         }
+                     ]
+                 };
+
+                 myChart1.on('updateAxisPointer', function (event) {
+                     var xAxisInfo = event.axesInfo[0];
+                     if (xAxisInfo) {
+                         var dimension = xAxisInfo.value + 1;
+                         myChart1.setOption({
+                             series: {
+                                 id: 'pie',
+                                 label: {
+                                     formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                                 },
+                                 encode: {
+                                     value: dimension,
+                                     tooltip: dimension
+                                 }
+                             }
+                         });
+                     }
+                 });
+
+                 myChart1.setOption(option);
+
+             });;
+             if (option && typeof option === "object") {
+                 myChart1.setOption(option, true);
+             }
+
+         }
+
+    </script>
+</body>
+</html>

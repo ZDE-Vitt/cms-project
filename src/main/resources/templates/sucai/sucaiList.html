@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/layui.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/view.css}"/>
+    <link rel="icon" href="/favicon.ico">
+    <title>管理后台-素材管理</title>
+</head>
+<body class="layui-view-body">
+<div class="layui-content">
+    <div class="layui-row">
+        <div class="layui-card">
+            <div class="layui-card-body" id="sucaiContainer">
+                <!--                    <button class="layui-btn layui-btn-blue"><i class="layui-icon">&#xe654;</i><a th:href="@{/a/film/form}">新增</a></button>-->
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>上传者</th>
+                        <th>上传时间</th>
+                        <th>图片名称</th>
+                        <th>图片</th>
+                        <th>介绍</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for = "(item,index) of sucai">
+                        <td>{{item.author}}</td>
+                        <td>{{item.createtime}}</td>
+                        <td>{{item.name}}</td>
+                        <td><img :src="item.picurl" click="jumpToDetail(item)" width="120" height="100"></td>
+                        <td>{{item.description}}</td>
+                        <td>
+
+                            <div v-if="item.status == 3">
+                                <div>
+                                    <button style="background:#1B86E5" type="button" @click="reinpass(index)" class="layui-btn">
+                                        下&nbsp;&nbsp;&nbsp;&nbsp;架
+                                    </button>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--分页导航-->
+                <div id="pagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/assets/layui.all.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{https://cdn.staticfile.org/vue/2.2.2/vue.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var contextPath = [[${#request.getContextPath()}]]; //获取当前应用路径
+    /*]]>*/
+</script>
+<script type="text/javascript">
+    //使用Vue渲染模板，初始化时是没有数据的，需要ajax请求拿到数据
+    var vue = new Vue({
+        el: "#sucaiContainer",
+        data: {
+            sucai: null
+        }
+    });
+
+    var pageIndex = 1;  //默认第一页
+    var pageSize = 10;   //每页显示记录数
+    var totalCount = 0; //总记录数
+
+    //默认第一次加载数据
+    pagination(pageIndex, pageSize);
+
+    //获取分页数据
+    function pagination(pageIndex, pageSize) {
+        //查询条件
+        var param = {
+            pageIndex: pageIndex,
+            pageSize: pageSize,
+            //其它查询条件可在下面添加
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: contextPath + '/a/sucai/getListData',
+            data: param,
+            async: false,//一定设置同步，目的为对totalCount赋值
+            success: function (data) {
+                vue.sucai = data.data;
+                totalCount = data.count;
+            }
+        });
+    };
+
+    //使用layui分页
+    layui.use('laypage', function(){
+        var laypage = layui.laypage;
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'pagination' //注意，这里的 data 是 ID，不用加 # 号
+            ,count: totalCount  //数据总数，从服务端得到
+            // ,curr: curr
+            // , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+            ,limit: 10
+            ,jump: function(obj, first){
+                //obj包含了当前分页的所有参数，比如：
+                // console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                // console.log(obj.limit); //得到每页显示的条数
+
+                //首次不执行
+                if(!first){
+                    // window.location.href = contextPath + "/a/film/list?page=" + (obj.curr) + "&size=" + obj.limit
+                    pagination(obj.curr, obj.limit);//第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+                }
+            }
+        });
+    });
+
+    function reinpass(index) {
+        $.ajax({
+            type: 'POST',
+            url: contextPath + '/a/sucai/reinpass',
+            data: {id : vue.sucai[index].id},
+            async: false,//一定设置同步，目的为对totalCount赋值
+            success: function (data) {
+                layer.msg("修改成功", function(){
+                    time:1000
+                });
+                layui.use('laypage', function(){
+                    var laypage = layui.laypage;
+                    laypage.render({
+                        elem: 'pagination' //注意，这里的 data 是 ID，不用加 # 号
+                        ,count: totalCount  //数据总数，从服务端得到
+                        ,limit: 10
+                        ,jump: function(obj){
+                            pagination(obj.curr, obj.limit);//第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+                        }
+                    });
+                });
+            }
+        })
+    }
+
+</script>
+</body>
+</html>
